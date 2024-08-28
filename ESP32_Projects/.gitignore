@@ -1,0 +1,12 @@
+# Ignore everything
+*
+
+# But not these files...
+!.gitignore
+!main/main_app.c
+#!Errors.docx
+!.vscode/c_cpp_properties.json
+# etc...
+
+# ...even if they are in subdirectories
+!*/
