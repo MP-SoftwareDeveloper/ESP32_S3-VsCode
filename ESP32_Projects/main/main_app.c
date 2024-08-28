@@ -1,29 +1,27 @@
 
-
 #include <stdio.h>
+//#include "esp_mac.h"
+#include "driver/gpio.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
  
-#define GPIO_OUT_W1TS_REG 0x60004008
-#define GPIO_OUT_W1TC_REG 0x6000400c
-#define GPIO_ENABLE_REG   0x60004020
-#define GPIO13             13
-#define DELAY_MS          200
-                       
 void app_main(void)
 {
-   volatile __UINT32_TYPE__* gpio_out_w1ts_reg = (volatile __UINT32_TYPE__*) GPIO_OUT_W1TS_REG;
-   volatile __UINT32_TYPE__* gpio_out_w1tc_reg = (volatile __UINT32_TYPE__*) GPIO_OUT_W1TC_REG;
-   volatile __UINT32_TYPE__* gpio_enable_reg = (volatile __UINT32_TYPE__*) GPIO_ENABLE_REG;
+  gpio_set_direction(GPIO_NUM_12,GPIO_MODE_DEF_INPUT);
+  gpio_set_pull_mode(GPIO_NUM_12,GPIO_PULLUP_ONLY);
+  gpio_set_direction(GPIO_NUM_13,GPIO_MODE_DEF_OUTPUT );
 
-   *gpio_enable_reg = (1 << GPIO13);
+  while (true)
+  {
+    //gpio_set_level(13,1);
+    if(gpio_get_level(GPIO_NUM_12))
+        gpio_set_level(GPIO_NUM_13,0);
+    else
+        gpio_set_level(GPIO_NUM_13,1);
+    /* code */
 
-   while(1)
-   {
-      *gpio_out_w1ts_reg = (1 << GPIO13);
-      vTaskDelay(pdMS_TO_TICKS(DELAY_MS));
-      *gpio_out_w1tc_reg = (1 << GPIO13);
-      vTaskDelay(pdMS_TO_TICKS(DELAY_MS));
-   }
-
+    vTaskDelay(10);
+  }
+    
 }
+
