@@ -50,7 +50,9 @@ UART Communication: Data sent from PuTTY appears in VSCode Terminal.
 
 #define LOW 0
 #define HIGH 1
-#define led_pin GPIO_NUM_13
+//#define GPIO_NUM_40 GPIO_NUM_MAX
+#define led_pin_green GPIO_NUM_43
+#define led_pin_yellow GPIO_NUM_44
 
 const uart_port_t uart_num = UART_NUM_2;
 static const uint8_t buf_len = 20;
@@ -62,14 +64,20 @@ static int val=0;
 // CONFIG_FREERTOS_UNICORE
 // Task: Blink LED at rate set by global variable
 void blink(void)
-{
-    gpio_set_direction(GPIO_NUM_13,GPIO_MODE_OUTPUT);
+{ 
+    //uart_driver_delete(UART_NUM_0);
+    gpio_reset_pin(GPIO_NUM_43);
+    gpio_reset_pin(GPIO_NUM_44);
+    gpio_set_direction(led_pin_green,GPIO_MODE_OUTPUT);
+    gpio_set_direction(led_pin_yellow,GPIO_MODE_OUTPUT);
 
     while (1)
     {
-        gpio_set_level(led_pin, LOW);
+        gpio_set_level(led_pin_green, LOW);
+        gpio_set_level(led_pin_yellow, HIGH);
         vTaskDelay(led_delay / portTICK_PERIOD_MS);
-        gpio_set_level(led_pin, HIGH);
+        gpio_set_level(led_pin_green, HIGH);
+        gpio_set_level(led_pin_yellow, LOW);
         vTaskDelay(led_delay / portTICK_PERIOD_MS);
     }
 }
@@ -175,6 +183,6 @@ void app_main(void)
    //xTaskCreate( Function to be called, Name of task, Stack size(bytes in ESP32, words in freertos) Parameter to pass to function, 
    //Task Priority 0 lowest priority (configMAX_PRIORITIES -1), Handle_t to task);
    xTaskCreate( blink, "LED blink", 2048, NULL , 1, 0 );
-   xTaskCreate(UartTest, "UartTest_task", 4098, NULL, 10, 0);
+   //xTaskCreate(UartTest, "UartTest_task", 4098, NULL, 10, 0);
   
 }
